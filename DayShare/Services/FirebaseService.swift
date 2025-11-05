@@ -5,11 +5,11 @@
 //  Created on 2025-10-31
 //  Copyright © 2025 DayShare. All rights reserved.
 //
+//  NOTE: Currently running in LOCAL-ONLY mode (no Firebase connection)
+//  All data is stored in CoreData only.
+//
 
 import Foundation
-import FirebaseCore
-import FirebaseFirestore
-import FirebaseAuth
 
 class FirebaseService {
     // MARK: - Singleton
@@ -18,65 +18,59 @@ class FirebaseService {
 
     // MARK: - Properties
 
-    private let db = Firestore.firestore()
-    private let auth = Auth.auth()
-
-    // MARK: - Collections
-
-    private let usersCollection = "users"
-    private let groupsCollection = "groups"
-    private let sharesCollection = "shares"
+    // Local-only mode: Firebase disabled for now
+    private var localUserId: String = "local-user-\(UUID().uuidString)"
+    private var isLocalMode = true
 
     // MARK: - Initialization
 
     private init() {
-        configureFirestore()
-    }
-
-    // MARK: - Configuration
-
-    private func configureFirestore() {
-        let settings = FirestoreSettings()
-        // Use Seoul region for PIPA compliance
-        // This should be configured in Firebase Console
-        settings.isPersistenceEnabled = true
-        settings.cacheSizeBytes = FirestoreCacheSizeUnlimited
-        db.settings = settings
+        print("📱 FirebaseService: Running in LOCAL-ONLY mode")
+        print("📱 All data stored in CoreData only")
     }
 
     // MARK: - Authentication
 
     func getCurrentUserId() -> String? {
-        return auth.currentUser?.uid
+        return localUserId
     }
 
     func isUserAuthenticated() -> Bool {
-        return auth.currentUser != nil
+        return true // Always authenticated in local mode
     }
 
-    // MARK: - Sync Methods (to be implemented)
+    // MARK: - Sync Methods (No-op in local mode)
 
     func syncUser(_ user: User) async throws {
-        // Implementation for syncing user data to Firestore
+        // Local mode: No sync needed
+        print("📱 Local mode: User data stored in CoreData only")
     }
 
     func syncGroup(_ group: Group) async throws {
-        // Implementation for syncing group data to Firestore
+        // Local mode: No sync needed
+        print("📱 Local mode: Group data stored in CoreData only")
     }
 
     func syncShare(_ share: Share) async throws {
-        // Implementation for syncing share data to Firestore
+        // Local mode: No sync needed
+        print("📱 Local mode: Share data stored in CoreData only")
     }
 
     // MARK: - Fetch Methods
 
     func fetchGroups(for userId: String) async throws -> [String: Any] {
-        // Implementation for fetching groups from Firestore
+        // Local mode: Data comes from CoreData only
         return [:]
     }
 
     func fetchShares(for groupId: String) async throws -> [[String: Any]] {
-        // Implementation for fetching shares from Firestore
+        // Local mode: Data comes from CoreData only
         return []
+    }
+
+    // MARK: - Local Mode Info
+
+    func isRunningInLocalMode() -> Bool {
+        return isLocalMode
     }
 }
